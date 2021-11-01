@@ -1,0 +1,13 @@
+- LanguageData:
+    - name
+    - extension
+    - count
+    - rows
+    - comments (both inline and multiline)
+    - funcs
+    - classes
+    - interfaces
+- TextData:
+    - rows
+    - chars
+    - whitespace (tab, space)
