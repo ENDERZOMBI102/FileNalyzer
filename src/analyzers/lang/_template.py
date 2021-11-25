@@ -1,11 +1,13 @@
 from pathlib import Path
 
+import util
 from analyzers import LanguageData
 
 
 _data = LanguageData(
 	lang=Path(__file__).name[:-3].capitalize()
 )
+changed: bool = False
 
 
 def getData() -> LanguageData:
@@ -17,7 +19,7 @@ def getExtensions() -> tuple[str]:
 
 
 def supports( file: Path ) -> bool:
-	return True
+	return util.getExtension(file) in getExtensions()
 
 
 def analyze( path: Path ) -> None:

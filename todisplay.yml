@@ -2,12 +2,22 @@
     - name
     - extension
     - count
-    - rows
+    - rows # from text
     - comments (both inline and multiline)
     - funcs
     - classes
     - interfaces
+
 - TextData:
     - rows
     - chars
+    - empty lines
     - whitespace (tab, space)
+
+- AudioData:
+    - lenght
+    - author
+    - title
+
+- ImgData:
+    - resolution

@@ -4,22 +4,20 @@ from re import Pattern
 from typing import Final
 
 import util
-from analyzers import LanguageData
+from analyzers import HtmlData
 
 
-_pattern: Final[ Pattern ] = re.compile( 'class [A-z]+\([A-z= ,]*ABC[A-z= ,]*\):' )
-_data = LanguageData(
-	lang='Python'
-)
+_pattern: Final[Pattern] = re.compile( '<[a-zA-Z]+' )
+_data = HtmlData()
 changed: bool = False
 
 
-def getData() -> LanguageData:
+def getData() -> HtmlData:
 	return _data
 
 
-def getExtensions() -> tuple[ str, str ]:
-	return '.py', 'pyw',
+def getExtensions() -> tuple[ str ]:
+	return '.html',
 
 
 def supports( file: Path ) -> bool:
@@ -33,22 +31,25 @@ def analyze( path: Path ) -> None:
 	multiLineCommentOpen: bool = False
 	for line in path.read_text().splitlines():
 		line = line.strip()
-		if line.startswith('"""'):
+		if line.startswith('<!--'):
 			if multiLineCommentOpen:
 				multiLineCommentOpen = False
 			else:
 				multiLineCommentOpen = True
 		if multiLineCommentOpen:
 			_data.commentLines += 1
-			continue
-		_data.commentLines += line.startswith( '#' )
+			if '-->' not in line:
+				continue
+			else:
+				line = line[ : line.index('-->') ]
 		_data.emptyLines += line.replace('\t', '').replace(' ', '') == ''
 		_data.whitespaces += line.count(' ')
 		_data.whitespaces += line.count('\t')
-		_data.funcs += line.count('def')
-		_data.classes += line.count('class')
-		_data.interfaces += len( re.findall( _pattern, line ) )
+		_data.divs += line.count('<div')
+		_data.styleTags += line.count('<style')
+		_data.scriptTags += line.count('<script')
 		_data.totalLines += 1
+	_data.tags += len( re.findall( _pattern, path.read_text() ) )
 
 
 def getCategory() -> str:
